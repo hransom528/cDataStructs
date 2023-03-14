@@ -1,10 +1,10 @@
 // Harris Ransom
-// C Linked List
+// C Doubly Linked List
 // Based on video by Jacob Sorber
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "LinkedList.h"
+#include "DoublyLinkedList.h"
 
 // Prints current linked list
 void printList(node_t *head) {
@@ -21,6 +21,7 @@ node_t *addNode(int value) {
     node_t *result = malloc(sizeof(node_t));
     result->value = value;
     result->next = NULL;
+    result->prev = NULL;
     return result;
 }
 
@@ -28,29 +29,38 @@ node_t *addNode(int value) {
 void removeNode(node_t *head, node_t *removal) {
     if (head == removal) {
         head = removal->next;
-        return;
+        if (head != NULL) {
+            head->prev = NULL;
+        }
     }
     else {
-        node_t *temp = head;
-        while (temp != NULL && (temp->next != removal)) {
-            temp = temp->next;
+        removal->prev->next = removal->next;
+        if (removal->next != NULL) {
+            removal->next->prev = removal->prev;
         }
-        if (temp == NULL) return;
-        temp->next = removal->next;
-        removal->next = NULL;
     }
+    removal->next = NULL;
+    removal->prev = NULL;
 }
 
 // Creates new node at head of list
 node_t *insertHeadNode(node_t *head, node_t *insert) {
     insert->next = head;
+    if (head != NULL) {
+        head->prev = insert;
+    }
     head = insert;
+    insert->prev = NULL;
     return insert;
 }
 
 // Inserts new node after specified node in list
 node_t *insertAfterNode(node_t *node, node_t *insert) {
     insert->next = node->next;
+    if (insert->next != NULL) {
+        insert->next->prev = node;
+    }
+    insert->prev = node;
     node->next = insert;
 }
 
