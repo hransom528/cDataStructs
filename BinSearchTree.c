@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define TREE_SIZE 5
-
 typedef struct treenode {
     int value;
     struct treenode *left;
@@ -57,39 +55,79 @@ void printTree(treenode *root, int level) {
 
 }
 
+// Inserts number recursively into search tree
 bool insertNum(treenode **rootp, int value) {
-
 	if (*rootp == NULL) {
-		
+		*rootp = createnode(value);
+        return true;
 	}
+    else if (value == (*rootp)->value) {
+        return false;
+    }
+    else if (value < (*rootp)->value) {
+        return insertNum(&(*rootp)->left, value);
+    }
+    else {
+        return insertNum(&(*rootp)->right, value);
+    }
+}
+
+// Determines if number is in search tree
+bool findNum(treenode *rootp, int value) {
+    if (rootp == NULL) {
+        return false;
+    }
+    else if (value == rootp->value) {
+        return true;
+    }
+    else if (value < rootp->value) {
+        return findNum(rootp->left, value);
+    }
+    else {
+        return findNum(rootp->right, value);
+    }
+}
+
+// Frees tree from memory
+void deleteTree(treenode *rootp) {
+    if (rootp == NULL) return;
+    else if (rootp->left == NULL || rootp->right == NULL) {
+        free(rootp);
+        return;
+    }
+    else {
+        deleteTree(rootp->right);
+        deleteTree(rootp->left);
+        free(rootp);
+        return;
+    }
 }
 
 // MAIN
 int main() {
     // Creates binary tree
-    treenode **tree = malloc(TREE_SIZE * sizeof(treenode));
-    for (int i = 0; i < TREE_SIZE; i++) {
-        tree[i] = createnode(10+i);
-    }
-    treenode *n1 = tree[0];
-    treenode *n2 = tree[1];
-    treenode *n3 = tree[2];
-    treenode *n4 = tree[3];
-    treenode *n5 = tree[4];
+    treenode *root = NULL;
 
-    // Builds tree structure
-    n1->left = n2;
-    n1->right = n3;
-    n3->left = n4;
-    n3->right = n5;
+    // Builds tree
+    insertNum(&root, 15);
+    insertNum(&root, 11);
+    insertNum(&root, 24);
+    insertNum(&root, 5);
+    insertNum(&root, 16);
+    insertNum(&root, 19);
 
-    // Outputs tree
-    printTree(tree[0], 0);
+    printTree(root, 0);
+
+    // Tests findNum
+    printf("%d (%d)\n", 16, findNum(root, 16));
+    printf("%d (%d)\n", 15, findNum(root, 15));
+    printf("%d (%d)\n", 15, findNum(root, 5));
+    printf("%d (%d)\n", 115, findNum(root, 115));
+    printf("%d (%d)\n", 1, findNum(root, 1));
+    printf("%d (%d)\n", 7, findNum(root, 7));
 
     // Deletes tree
-    for (int i = 0; i < TREE_SIZE; i++) {
-        free(tree[i]);
-    }
+    deleteTree(root);
     return 0;
 }
 
