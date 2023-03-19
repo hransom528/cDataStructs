@@ -5,10 +5,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <limits.h>
 #include "circqueue.h"
 
 #define QUEUE_SIZE 5
+
+typedef struct myq {
+	int *values;
+    int head, tail, n, size;
+} queue;
 
 // Initializes queue
 void initQueue(queue *q, int maxSize) {
@@ -73,6 +77,7 @@ void printQueue(queue *q) {
 }
 
 // MAIN
+/*
 int main() {
 	// Initializes queue
 	queue q1;
@@ -92,3 +97,4 @@ int main() {
 	queueDestroy(&q1);
 	return 0;
 }
+*/
